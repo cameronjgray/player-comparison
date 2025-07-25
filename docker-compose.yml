@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.server
     ports:
-      - ${SERVER_PORT}:8080
+      - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
       - ./src:/app/src
     restart: always

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { exampleDB } = require('./modules/exampleDB');
 
 router.get('/health', async (req, res) => {
     try {
@@ -10,5 +11,13 @@ router.get('/health', async (req, res) => {
     }
 })
 
+router.get('/db-example', async (req, res) => {
+    try {
+      await exampleDB();
+      res.send('done.');
+    } catch (e) {
+        console.error('Error: ', e.message);
+    }
+})
 
 module.exports = router;
