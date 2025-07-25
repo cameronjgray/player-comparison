@@ -5,7 +5,19 @@ services:
       context: .
       dockerfile: Dockerfile.server
     ports:
-      - "8081:8080"
+      - ${SERVER_PORT}:8080
     volumes:
       - ./src:/app/src
     restart: always
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./setup/db_setup.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    ports:
+      - ${DB_PORT}:5432
