@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { exampleDB } = require('./modules/exampleDB');
+const teamsAPI = require('./modules/teams');
 
 router.get('/health', async (req, res) => {
     try {
@@ -13,7 +13,9 @@ router.get('/health', async (req, res) => {
 
 router.get('/db-example', async (req, res) => {
     try {
-      await exampleDB();
+      await teamsAPI.insertTeams();
+      const teams = await teamsAPI.getTeams();
+      console.log('teams', teams);
       res.send('done.');
     } catch (e) {
         console.error('Error: ', e.message);
