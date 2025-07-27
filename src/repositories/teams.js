@@ -1,4 +1,5 @@
 const query = require('../services/query');
+const generateInsertQueryValues = require('../helpers/generateInsertQueryValues');
 
 const getTeams = async () => {
   const teams = await query(
@@ -13,18 +14,7 @@ const insertTeams = async (teams) => {
     return false
   };
 
-  let mapTeamsToQuery = '';
-  let j = 0;
-  for (let i = 0; i < teams.length; i++ ) {
-    if (j === 0) {
-      mapTeamsToQuery += `( $${j+1}, $${j+2} ) `;
-    }
-    else {
-      mapTeamsToQuery += `, ( $${j+1}, $${j+2} ) `;
-    }
-    j+=2
-  };
-
+  const mapTeamsToQuery = generateInsertQueryValues(teams);
   const teamValuesForQuery = teams.flat();
   const queryString = `INSERT INTO teams (name, abbreviation) VALUES ${mapTeamsToQuery};`;
 
