@@ -1,4 +1,6 @@
 const teamsRepository = require('../repositories/teams');
+const readCSVFile = require('../helpers/readCSVFile');
+const { FILES } = require('../helpers/enums');
 
 const getTeams = async () => {
   const teams = teamsRepository.getTeams();
@@ -7,10 +9,7 @@ const getTeams = async () => {
 }
 
 const insertTeams = async () => {
-  const teams = [
-    ['Tampa Bay Buccaneers', 'TB'],
-    ['Housten Texans', 'HST'],
-  ];
+  const teams = readCSVFile(FILES.DATA.TEAMS);
 
   const result =  await teamsRepository.insertTeams(teams);
 

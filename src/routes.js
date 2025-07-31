@@ -11,7 +11,7 @@ router.get('/health', async (req, res) => {
     }
 })
 
-router.get('/db-example', async (req, res) => {
+router.get('/sync', async (req, res) => {
     try {
       await teamsAPI.insertTeams();
       const teams = await teamsAPI.getTeams();
