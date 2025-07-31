@@ -1,9 +1,11 @@
 const query = require('../services/query');
 const generateInsertQueryValues = require('../helpers/generateInsertQueryValues');
 
+const TABLE = 'teams';
+
 const getTeams = async () => {
   const teams = await query(
-    'SELECT * FROM teams;',
+    `SELECT * FROM ${TABLE};`,
   );
 
   return teams?.rows ?? [];
@@ -16,7 +18,7 @@ const insertTeams = async (teams) => {
 
   const mapTeamsToQuery = generateInsertQueryValues(teams);
   const teamValuesForQuery = teams.flat();
-  const queryString = `INSERT INTO teams (name, abbreviation) VALUES ${mapTeamsToQuery};`;
+  const queryString = `INSERT INTO ${TABLE} (name, abbreviation) VALUES ${mapTeamsToQuery};`;
 
   const result =  await query(queryString, teamValuesForQuery);
 

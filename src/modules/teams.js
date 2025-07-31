@@ -17,7 +17,7 @@ const insertTeams = async () => {
     console.log('Successfully inserted teams.');
   }
   else {
-    console.log('Failed to insert teams');
+    console.log('Failed to insert teams.');
   }
 };
 
