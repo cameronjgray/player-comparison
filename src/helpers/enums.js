@@ -1,6 +1,7 @@
 const FILES = {
   DATA: {
     TEAMS: './setup/data/teams.csv',
+    PLAYERS: './setup/data/players.csv',
     SCHEDULE_2025: './setup/data/schedule_2025.csv',
     RANKINGS: './setup/data/rankings.csv',
   },
@@ -14,4 +15,11 @@ const RankingType = {
   secondary: 'Secondary Ranking',
 };
 
-module.exports = { FILES, RankingType };
+const SyncDataNames = {
+  teams: 'teams',
+  schedules: 'schedules',
+  rankings: 'rankings',
+  players: 'players',
+};
+
+module.exports = { FILES, RankingType, SyncDataNames };

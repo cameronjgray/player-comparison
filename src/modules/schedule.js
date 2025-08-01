@@ -1,6 +1,7 @@
 const scheduleRepository = require('../repositories/schedule');
+const syncRepository = require('../repositories/sync');
 const readCSVFile = require('../helpers/readCSVFile');
-const { FILES } = require('../helpers/enums');
+const { FILES, SyncDataNames } = require('../helpers/enums');
 
 const getSchedule = async (year) => {
   const schedule = scheduleRepository.getSchedule(year);
@@ -9,6 +10,11 @@ const getSchedule = async (year) => {
 }
 
 const insertSchedules = async () => {
+  const haveSynced = await syncRepository.getSyncStatus(SyncDataNames.schedules);
+  if (haveSynced) {
+    console.log('Schedule already synced.');
+    return;
+  };
   const files = [ FILES.DATA.SCHEDULE_2025 ];
 
   for (const file of files) {
@@ -17,6 +23,7 @@ const insertSchedules = async () => {
     const result =  await scheduleRepository.insertSchedule(schedule);
 
     if (result) {
+    await syncRepository.updateSyncStatus(SyncDataNames.schedules, true);
       console.log(`Successfully inserted schedule: ${file}`);
     }
     else {
