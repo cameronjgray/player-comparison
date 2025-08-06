@@ -13,6 +13,17 @@ const getRanking = async (year, rankingType) => {
   return ranking?.rows ?? [];
 }
 
+const getRankingForTeam = async (year, rankingType, team) => {
+  const ranking = await query(
+    `SELECT * FROM ${TABLE}
+    WHERE year = ${year}
+    AND "rankingType" = '${rankingType}'
+    AND "team" = '${team}';`,
+  );
+
+  return ranking?.rows ?? [];
+}
+
 const getRankingsForTeam = async (year, team) => {
   const ranking = await query(
     `SELECT * FROM ${TABLE}
@@ -38,4 +49,9 @@ const insertRankings = async (rankings) => {
   return result?.rowCount === rankings.length;
 }
 
-module.exports = { getRanking, insertRankings, getRankingsForTeam };
+module.exports = {
+  getRanking,
+  insertRankings,
+  getRankingsForTeam,
+  getRankingForTeam,
+};

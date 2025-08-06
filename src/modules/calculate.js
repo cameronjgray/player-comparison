@@ -4,15 +4,23 @@ const { RankingType, Positions } = require('../helpers/enums');
 
 const NUMBER_OF_TEAMS = 32;
 const HIGHEST_RANKING = 99;
+const YEAR = 2025;
 
 const getRankingGrade = (rank) => 1 - (rank / NUMBER_OF_TEAMS);
 
-const getRatingGrade = (rank) => 1 - (rank / HIGHEST_RANKING);
+const getRatingGrade = (rank) => (rank / HIGHEST_RANKING);
+
+const flipGrade = (grade) => 1 - grade;
 
 const getPositionGrade = async (rankingType, team) => {
   const teamsInSchedule = await scheduleAPI.getTeamsInSchedule(team);
-  console.log(teamsInSchedule);
   const strengthRankingsForScheduledTeams = [];
+
+  for (const team of teamsInSchedule) {
+    const teamRanking = await rankingsAPI.getRankingForTeam(YEAR, rankingType, team);
+    strengthRankingsForScheduledTeams.push(teamRanking);
+  }
+
   let totalStrength = 0;
 
   for (const rank of strengthRankingsForScheduledTeams) {
@@ -22,91 +30,48 @@ const getPositionGrade = async (rankingType, team) => {
   return totalStrength ? totalStrength / NUMBER_OF_TEAMS : 0;
 };
 
-const getOppositionPositionGrades = async (team, position) => {
+const getOppositionPositionGrade = async (team, position) => {
   switch (position) {
     case Positions.WR:
     case Positions.TE:
-      const oppositionPositions = [RankingType.secondary];
-      await getPositionGrade(RankingType.secondary, team);
-      return [];
+      return flipGrade(await getPositionGrade(RankingType.secondary, team));
     case Positions.HB:
     case Positions.FB:
     case Positions.QB:
-      // const oppositionPositions = [RankingType.dLine];
-      return [];
+      return flipGrade(await getPositionGrade(RankingType.dLine, team));
     default:
-      return [];
+      return 1;
   };
 };
 
-const getOppositionPositionWeights = (team, position) => {
-  switch (position) {
-    case Positions.WR:
-      return [];
-    case Positions.HB:
-    case Positions.FB:
-      return [];
-    case Positions.TE:
-      return [];
-    case Positions.QB:
-      return [];
-    default:
-      return [];
-  };
-};
-
-const getTeamPositionGrades = (team, position) => {
+const getTeamPositionGrade = async (team, position) => {
   switch (position) {
     case Positions.HB:
     case Positions.FB:
     case Positions.QB:
-      const oppositionPositions = [RankingType.dLine];
-      return [];
+      return await getPositionGrade(RankingType.oLine, team);
     default:
-      return [];
+      return 1;
   };
 };
 
-const getTeamPositionWeights = (team, position) => {
-  switch (position) {
-    case Positions.HB:
-    case Positions.FB:
-    case Positions.QB:
-      const oppositionPositions = [RankingType.dLine];
-      return [];
-    default:
-      return [];
-  };
-};
-
-const calculatePlayerGrade = async (player) => {
-  const teamRankings = await rankingsAPI.getRankingsForTeam(2025, player.team);
+const calculatePlayerGrade = async (player, weights) => {
+  const teamRankings = await rankingsAPI.getRankingsForTeam(YEAR, player.team);
   const { rank: teamPowerRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.powerRanking);
   const { rank: teamStrengthOfScheduleRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.strengthOfSchedule);
+
   const playerTeamPowerRankingGrade = getRankingGrade(teamPowerRanking);
-  const playerTeamPowerRankingWeight = 0.2; // these need to adapt based off of the position weights perhaps as a percentage of what's left
-
   const playerTeamStrengthOfScheduleGrade = getRankingGrade(teamStrengthOfScheduleRanking);
-  const playerTeamStrengthOfScheduleWeight = 0.2;// these need to adapt based off of the position weights
-
-  const oppositionPositionGrades = await getOppositionPositionGrades(player.team, player.position);
-  const oppositionPositionWeights = await getOppositionPositionWeights(player.team, player.position);
-
+  const oppositionPositionGrade = await getOppositionPositionGrade(player.team, player.position);
+  const teamPositionGrade = await getTeamPositionGrade(player.team, player.position);
   const playerRatingGrade = getRatingGrade(player.rating);
-  const playerRatingWeight = 0;
 
   const grades = [
     playerTeamPowerRankingGrade,
     playerTeamStrengthOfScheduleGrade,
-    ...oppositionPositionGrades,
+    teamPositionGrade,
+    oppositionPositionGrade,
     playerRatingGrade,
-  ];
-
-  const weights = [
-    playerTeamPowerRankingWeight,
-    playerTeamStrengthOfScheduleWeight,
-    ...oppositionPositionWeights,
-    playerRatingWeight,
   ];
 
   if(grades.length !== weights.length){

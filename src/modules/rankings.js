@@ -9,6 +9,13 @@ const getRanking = async (year, rankingType) => {
   return ranking;
 }
 
+const getRankingForTeam = async (year, rankingType, team) => {
+  const rankingList = await rankingsRepository.getRankingForTeam(year, rankingType, team);
+
+  return rankingList[0].rank;
+}
+
+
 const getRankingsForTeam = async (year, team) => {
   const rankingList = await rankingsRepository.getRankingsForTeam(year, team);
 
@@ -34,4 +41,9 @@ const insertRankings = async () => {
   }
 };
 
-module.exports = { getRanking, insertRankings, getRankingsForTeam };
+module.exports = {
+  getRanking,
+  insertRankings,
+  getRankingsForTeam,
+  getRankingForTeam,
+};

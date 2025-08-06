@@ -30,8 +30,22 @@ router.post('/sync', async (req, res) => {
 
 router.get('/calc', async (req, res) => {
     try {
+      const playerTeamPowerRankingWeight = 0.2;
+      const playerTeamStrengthOfScheduleWeight = 0.2;
+      const teamPositionGrade = 0.2;
+      const oppositionPositionWeight = 0.2;
+      const playerRatingWeight = 0.2;
+
+      const startingWeights = [
+        playerTeamPowerRankingWeight,
+        playerTeamStrengthOfScheduleWeight,
+        teamPositionGrade,
+        oppositionPositionWeight,
+        playerRatingWeight,
+      ];
+
       const player1 = await playersAPI.getPlayerByNumber('MIN', 18);
-      const grade = await calculateAPI.calculatePlayerGrade(player1);
+      const grade = await calculateAPI.calculatePlayerGrade(player1, startingWeights);
       console.log('grade', grade);
       res.send('done.');
     } catch (e) {
