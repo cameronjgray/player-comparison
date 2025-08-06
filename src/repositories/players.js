@@ -20,7 +20,7 @@ const insertPlayers = async (players) => {
 
   const mapPlayersToQuery = generateInsertQueryValues(players);
   const playerValuesForQuery = players.flat();
-  const queryString = `INSERT INTO ${TABLE} (name, age, "jerseyNumber", height, weight, rating, college, experience, team, position)
+  const queryString = `INSERT INTO ${TABLE} (name, age, "jerseyNumber", height, weight, rating, college, experience, team, position, "fantasyPoints2024")
   VALUES ${mapPlayersToQuery};`;
 
   const result =  await query(queryString, playerValuesForQuery);

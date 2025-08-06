@@ -4,6 +4,7 @@ const FILES = {
     PLAYERS: './setup/data/players.csv',
     SCHEDULE_2025: './setup/data/schedule_2025.csv',
     RANKINGS: './setup/data/rankings.csv',
+    FANTASY_POINTS_2024: './setup/data/fantasy-players_2024.csv',
   },
 };
 
@@ -22,4 +23,27 @@ const SyncDataNames = {
   players: 'players',
 };
 
-module.exports = { FILES, RankingType, SyncDataNames };
+const Positions = {
+ S: 'S',
+ FB: 'FB',
+ HB: 'HB',
+ QB: 'QB',
+ P: 'P',
+ C: 'C',
+ LS: 'LS',
+ WR: 'WR',
+ DE: 'DE',
+ CB: 'CB',
+ DT: 'DT',
+ T: 'T',
+ K: 'K',
+ TE: 'TE',
+ LB: 'LB',
+};
+
+module.exports = {
+  FILES,
+  RankingType,
+  SyncDataNames,
+  Positions,
+};

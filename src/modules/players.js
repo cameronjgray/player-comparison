@@ -2,12 +2,13 @@ const playersRepository = require('../repositories/players');
 const syncRepository = require('../repositories/sync');
 const readCSVFile = require('../helpers/readCSVFile');
 const cleanPlayerData = require('../helpers/cleanPlayerData');
+const addFantasyPointsToPlayers  = require('../helpers/addFantasyPointsToPlayers');
 const { FILES, SyncDataNames } = require('../helpers/enums');
 
 const getPlayerByNumber = async (team, number) => {
-  const player = playersRepository.getPlayerByNumber(team, number);
+  const playerList = await playersRepository.getPlayerByNumber(team, number);
 
-  return player;
+  return playerList[0];
 }
 
 const insertPlayers = async () => {
@@ -17,8 +18,10 @@ const insertPlayers = async () => {
     return;
   };
   const players = cleanPlayerData(readCSVFile(FILES.DATA.PLAYERS));
+  const fantasyPoints2024 = readCSVFile(FILES.DATA.FANTASY_POINTS_2024);
+  const playersWithFantasyPoints = addFantasyPointsToPlayers(players, fantasyPoints2024);
 
-  const result = await playersRepository.insertPlayers(players);
+  const result = await playersRepository.insertPlayers(playersWithFantasyPoints);
 
   if (result) {
     await syncRepository.updateSyncStatus(SyncDataNames.players, true);
@@ -27,6 +30,9 @@ const insertPlayers = async () => {
   else {
     console.log('Failed to insert players.');
   }
+};
+
+const insertFantasyPoints = async () => {
 };
 
 module.exports = { getPlayerByNumber, insertPlayers };

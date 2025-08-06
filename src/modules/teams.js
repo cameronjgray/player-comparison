@@ -4,7 +4,7 @@ const readCSVFile = require('../helpers/readCSVFile');
 const { FILES, SyncDataNames } = require('../helpers/enums');
 
 const getTeams = async () => {
-  const teams = teamsRepository.getTeams();
+  const teams = await teamsRepository.getTeams();
 
   return teams;
 }

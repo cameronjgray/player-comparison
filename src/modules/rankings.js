@@ -4,9 +4,15 @@ const readCSVFile = require('../helpers/readCSVFile');
 const { FILES, SyncDataNames } = require('../helpers/enums');
 
 const getRanking = async (year, rankingType) => {
-  const ranking = rankingsRepository.getRanking(year, rankingType);
+  const ranking = await rankingsRepository.getRanking(year, rankingType);
 
   return ranking;
+}
+
+const getRankingsForTeam = async (year, team) => {
+  const rankingList = await rankingsRepository.getRankingsForTeam(year, team);
+
+  return rankingList;
 }
 
 const insertRankings = async () => {
@@ -28,4 +34,4 @@ const insertRankings = async () => {
   }
 };
 
-module.exports = { getRanking, insertRankings };
+module.exports = { getRanking, insertRankings, getRankingsForTeam };

@@ -38,7 +38,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     college varchar(50) NOT NULL,
     experience  integer NOT NULL,
     team varchar(3) references teams(abbreviation) NOT NULL,
-    position position_type NOT NULL
+    position position_type NOT NULL,
+    "fantasyPoints2024" decimal
   );
 
   CREATE TABLE schedule (

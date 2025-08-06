@@ -11,6 +11,17 @@ const getSchedule = async (year) => {
   return schedule?.rows ?? [];
 }
 
+const getTeamsSchedule = async (team, year) => {
+  const schedule = await query(
+    `SELECT * FROM ${TABLE}
+    WHERE year = ${year}
+    AND (home = '${team}' OR away = '${team}')
+    ;`,
+  );
+
+  return schedule?.rows ?? [];
+}
+
 const insertSchedule = async (schedule) => {
   if(!schedule || !schedule.length) {
     return false
@@ -25,4 +36,8 @@ const insertSchedule = async (schedule) => {
   return result?.rowCount === schedule.length;
 }
 
-module.exports = { getSchedule, insertSchedule };
+module.exports = {
+  getSchedule,
+  insertSchedule,
+  getTeamsSchedule,
+};

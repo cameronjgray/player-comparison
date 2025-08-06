@@ -1,21 +1,23 @@
+const { Positions } = require('../helpers/enums');
+
 const getSimplifiedPosition = (position) => {
   switch (position) {
     case 'LT':
     case 'RT':
-      return 'T';
+      return Positions.T;
     case 'LE':
     case 'RE':
-      return 'DE';
+      return Positions.DE;
     case 'MLB':
     case 'ROLB':
     case 'LOLB':
-      return 'LB';
+      return Positions.LB;
     case 'SS':
     case 'FS':
-      return 'S';
+      return Positions.S;
     case 'RG':
     case 'LG':
-      return 'G';
+      return Positions.G;
     default:
       return position;
   };

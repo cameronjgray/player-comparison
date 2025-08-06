@@ -4,14 +4,14 @@ set -a
 source .env
 set +a
 
-echo $SERVER_PORT
-
 if [ $# -eq 1 ]; then
     action=$1
     if [ "$1" == "health" ]; then
       curl -i localhost:$SERVER_PORT/health
     elif [ "$1" == "sync" ]; then
-      curl -i localhost:$SERVER_PORT/sync
+      curl -X POST -i localhost:$SERVER_PORT/sync
+    elif [ "$1" == "calc" ]; then
+      curl -X GET -i localhost:$SERVER_PORT/calc
     else
         echo "Action: $1 does not exist"
     fi
