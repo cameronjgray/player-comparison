@@ -32,7 +32,28 @@ const insertPlayers = async () => {
   }
 };
 
-const insertFantasyPoints = async () => {
+const getPlayersWithFantasyPoints = async () => {
+  const players = await playersRepository.getPlayersWithFantasyPoints();
+
+  return players;
 };
 
-module.exports = { getPlayerByNumber, insertPlayers };
+const getPlayersByFFPointsWithGoalRank = async () => {
+  const playersWithPoints = await getPlayersWithFantasyPoints();
+  const sortedPlayers = playersWithPoints.sort((playerA, playerB) => playerB.fantasyPoints2024 - playerA.fantasyPoints2024);
+  const playersWithGoalRank = [];
+
+  sortedPlayers.forEach((player, index) => {
+    const goalRank = index / sortedPlayers.length;
+
+    playersWithGoalRank.push({...player, goalRank});
+  });
+
+  return playersWithGoalRank;
+};
+
+module.exports = {
+  getPlayerByNumber,
+  insertPlayers,
+  getPlayersByFFPointsWithGoalRank,
+};

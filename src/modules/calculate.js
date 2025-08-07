@@ -12,12 +12,12 @@ const getRatingGrade = (rank) => (rank / HIGHEST_RANKING);
 
 const flipGrade = (grade) => 1 - grade;
 
-const getPositionGrade = async (rankingType, team) => {
+const getPositionGrade = async (rankingType, team, year) => {
   const teamsInSchedule = await scheduleAPI.getTeamsInSchedule(team);
   const strengthRankingsForScheduledTeams = [];
 
   for (const team of teamsInSchedule) {
-    const teamRanking = await rankingsAPI.getRankingForTeam(YEAR, rankingType, team);
+    const teamRanking = await rankingsAPI.getRankingForTeam(year ?? YEAR, rankingType, team);
     strengthRankingsForScheduledTeams.push(teamRanking);
   }
 
@@ -30,40 +30,40 @@ const getPositionGrade = async (rankingType, team) => {
   return totalStrength ? totalStrength / NUMBER_OF_TEAMS : 0;
 };
 
-const getOppositionPositionGrade = async (team, position) => {
+const getOppositionPositionGrade = async (team, position, year) => {
   switch (position) {
     case Positions.WR:
     case Positions.TE:
-      return flipGrade(await getPositionGrade(RankingType.secondary, team));
+      return flipGrade(await getPositionGrade(RankingType.secondary, team, year));
     case Positions.HB:
     case Positions.FB:
     case Positions.QB:
-      return flipGrade(await getPositionGrade(RankingType.dLine, team));
+      return flipGrade(await getPositionGrade(RankingType.dLine, team, year));
     default:
-      return 1;
+      return 0;
   };
 };
 
-const getTeamPositionGrade = async (team, position) => {
+const getTeamPositionGrade = async (team, position, year) => {
   switch (position) {
     case Positions.HB:
     case Positions.FB:
     case Positions.QB:
-      return await getPositionGrade(RankingType.oLine, team);
+      return await getPositionGrade(RankingType.oLine, team, year);
     default:
       return 1;
   };
 };
 
-const calculatePlayerGrade = async (player, weights) => {
-  const teamRankings = await rankingsAPI.getRankingsForTeam(YEAR, player.team);
+const calculatePlayerGrade = async (player, weights, year) => {
+  const teamRankings = await rankingsAPI.getRankingsForTeam(year ?? YEAR, player.team);
   const { rank: teamPowerRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.powerRanking);
   const { rank: teamStrengthOfScheduleRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.strengthOfSchedule);
 
   const playerTeamPowerRankingGrade = getRankingGrade(teamPowerRanking);
   const playerTeamStrengthOfScheduleGrade = getRankingGrade(teamStrengthOfScheduleRanking);
-  const oppositionPositionGrade = await getOppositionPositionGrade(player.team, player.position);
-  const teamPositionGrade = await getTeamPositionGrade(player.team, player.position);
+  const oppositionPositionGrade = await getOppositionPositionGrade(player.team, player.position, year ?? YEAR);
+  const teamPositionGrade = await getTeamPositionGrade(player.team, player.position, year ?? YEAR);
   const playerRatingGrade = getRatingGrade(player.rating);
 
   const grades = [

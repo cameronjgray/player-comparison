@@ -28,4 +28,17 @@ const insertPlayers = async (players) => {
   return result?.rowCount === players.length;
 }
 
-module.exports = { getPlayerByNumber, insertPlayers };
+const getPlayersWithFantasyPoints = async () => {
+  const players = await query(
+    `SELECT * FROM ${TABLE}
+    WHERE "fantasyPoints2024" IS NOT NULL;`
+  );
+
+  return players?.rows ?? [];
+};
+
+module.exports = {
+  getPlayerByNumber,
+  insertPlayers,
+  getPlayersWithFantasyPoints,
+};

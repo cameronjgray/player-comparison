@@ -39,6 +39,7 @@ const Positions = {
  K: 'K',
  TE: 'TE',
  LB: 'LB',
+  G: 'G',
 };
 
 module.exports = {

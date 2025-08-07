@@ -4,6 +4,8 @@ const teamsAPI = require('./modules/teams');
 const scheduleAPI = require('./modules/schedule');
 const rankingAPI = require('./modules/rankings');
 const playersAPI = require('./modules/players');
+const weightsAPI = require('./modules/weights');
+const predictAPI = require('./modules/predict');
 const calculateAPI = require('./modules/calculate');
 const { RankingType } = require('./helpers/enums');
 
@@ -45,12 +47,46 @@ router.get('/calc', async (req, res) => {
       ];
 
       const player1 = await playersAPI.getPlayerByNumber('MIN', 18);
-      const grade = await calculateAPI.calculatePlayerGrade(player1, startingWeights);
-      console.log('grade', grade);
+      const player2 = await playersAPI.getPlayerByNumber('PHI', 26);
+      const grade1 = await calculateAPI.calculatePlayerGrade(player1, startingWeights);
+      const grade2 = await calculateAPI.calculatePlayerGrade(player2, startingWeights);
+
+      console.log(`${player1.name}: ${grade1}`);
+      console.log(`${player2.name}: ${grade2}`);
       res.send('done.');
     } catch (e) {
-        console.error('Syncing Error: ', e.message);
+        console.error('Calc Error: ', e.message);
     }
 })
+
+router.post('/weight', async (req, res) => {
+  try {
+    await weightsAPI.insertWeight([0,0,0,0,0], 0);
+    res.send('done');
+  }
+  catch (e) {
+    console.error('weight error', e.message);
+  }
+})
+
+router.get('/weight', async (req, res) => {
+  try {
+    const weights = await weightsAPI.getWeights();
+    res.send(weights);
+  }
+  catch (e) {
+    console.error('weight error', e.message);
+  }
+})
+
+router.post('/predict', async (req,res) => {
+  try {
+    await predictAPI.predict();
+    res.send('done.');
+  }
+  catch (e) {
+    console.error('predict error', e.message);
+  }
+});
 
 module.exports = router;

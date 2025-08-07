@@ -8,9 +8,6 @@ const addFantasyPointsToPlayers = (players, fantasyPoints) => {
     const findPlayer = fantasyPoints.find(fantasyPlayer => fantasyPlayer[0] === player[0]);
 
     if (findPlayer) {
-      if (findPlayer[0] === 'Davante Adams') {
-        console.log(findPlayer);
-      }
       updatedPlayer.push(parseFloat(findPlayer[3]));
       successfulFindings++;
     }
