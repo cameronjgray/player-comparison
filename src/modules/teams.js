@@ -29,4 +29,18 @@ const insertTeams = async () => {
   }
 };
 
-module.exports = { getTeams, insertTeams };
+const getTeamsWithGoalRank = async () => {
+  const teams = await getTeams();
+  const sortedTeams = teams.sort((teamA, teamB) => teamA.position2024 - teamB.position2024);
+  const teamsWithGoalRank = [];
+
+  sortedTeams.forEach((team, index) => {
+    const goalRank = index / sortedTeams.length;
+
+    teamsWithGoalRank.push({ ...team, goalRank });
+  });
+
+  return teamsWithGoalRank;
+}
+
+module.exports = { getTeams, insertTeams, getTeamsWithGoalRank };

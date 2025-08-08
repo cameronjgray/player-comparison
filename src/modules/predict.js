@@ -27,19 +27,22 @@ const predictPlayers = async () => {
   const playersByFFPointsWithGoalRank = await playersAPI.getPlayersByFFPointsWithGoalRank();
   let score = 1;
   let runs = 0;
-  const TOTAL_RUNS = 10000;
+  const TOTAL_RUNS = 1000;
   const TARGET = 0.1;
-  const WEIGHT_LENGTH = 4;
-  const RUN_NAME = 'Player Weights - height+weight+exp+rating';
+  const WEIGHT_LENGTH = 1;
+  const RUN_NAME = 'Player Weights';
 
   while (score > TARGET && runs < TOTAL_RUNS) {
     const weightsList = getRandomWeights(WEIGHT_LENGTH);
     const weights = {
-      // age: weightsList[0],
-      height: weightsList[0],
-      weight: weightsList[1],
-      experience: weightsList[2],
-      rating: weightsList[3],
+      age: weightsList[0],
+      height: weightsList[1],
+      weight: weightsList[2],
+      experience: weightsList[3],
+      rating: weightsList[4],
+      powerRanking: weightsList[5],
+      oppositionPosition: weightsList[6],
+      teamPosition: weightsList[7],
     };
     const testPlayers = playersByFFPointsWithGoalRank.map(player => player);
     const teamsWithGrade = [];
@@ -76,9 +79,7 @@ const predictPlayers = async () => {
 };
 
 const predictTeams = async () => {
-  const teams = (await teamsAPI.getTeams()).sort((teamA, teamB) => teamA.position2024 - teamB.position2024);
-  console.log(teams);
-    return;
+  const teams = await teamsAPI.getTeamsWithGoalRank();
   let score = 1;
   let runs = 0;
   const TOTAL_RUNS = 10000;
