@@ -6,7 +6,7 @@ This is a classifier for guessing what players will be better in the 2025 NFL fa
 You should only need Docker to run the containers and everything else is handled by them. Only other thing is bash to run the interaction script (or you can just query the server directly)
 
 ## Setup
-Spin up the containers
+Firstly, make sure you create a .env file from the example and fill out the values. Then spin up the containers
 ```sh 
 docker compose up --build
 ```
