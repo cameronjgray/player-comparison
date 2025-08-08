@@ -15,7 +15,7 @@ if [ $# -eq 1 ]; then
     elif [ "$1" == "weight" ]; then
       curl -X POST -i localhost:$SERVER_PORT/weight
     elif [ "$1" == "getWeights" ]; then
-      curl -X GET -i localhost:$SERVER_PORT/weight
+      curl -X GET localhost:$SERVER_PORT/weight
     elif [ "$1" == "predict" ]; then
       curl -X POST -i localhost:$SERVER_PORT/predict
     else

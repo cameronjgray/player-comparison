@@ -11,7 +11,7 @@ const insertWeight = async (weights, score) => {
 };
 
 const getWeights = async () => {
-  const result = query(
+  const result = await query(
     `SELECT * from weights;`
   );
 

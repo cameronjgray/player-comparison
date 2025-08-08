@@ -3,8 +3,10 @@ const { FILES, SyncDataNames } = require('../helpers/enums');
 
 const getWeights = async () => {
   const weights = await weightRepository.getWeights();
+  const weightsCSV = weights.map(weight =>
+    `${weight.weights.join(",")},${weight.score}`).join('\n');
 
-  return weights;
+  return weightsCSV;
 }
 
 const insertWeight = async (weights, score) => {

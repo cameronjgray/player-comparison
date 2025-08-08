@@ -27,7 +27,7 @@ const predict = async () => {
   const playersByFFPointsWithGoalRank = await playersAPI.getPlayersByFFPointsWithGoalRank();
   let score = 1;
   let runs = 0;
-  const TOTAL_RUNS = 10000;
+  const TOTAL_RUNS = 100;
   const TARGET = 0.1;
 
   while (score > TARGET && runs < TOTAL_RUNS) {
