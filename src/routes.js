@@ -8,6 +8,7 @@ const weightsAPI = require('./modules/weights');
 const predictAPI = require('./modules/predict');
 const calculateAPI = require('./modules/calculate');
 const { RankingType } = require('./helpers/enums');
+const weightSettings = require('./weightSettings');
 
 router.get('/health', async (req, res) => {
     try {
@@ -30,30 +31,24 @@ router.post('/sync', async (req, res) => {
     }
 })
 
-router.get('/calc', async (req, res) => {
+router.get('/compare', async (req, res) => {
     try {
-      const playerAgeWeight = 0.2;
-      const playerHeightWeight = 0.2;
-      const playerWeightWeight = 0.2;
-      const playerExperienceWeight = 0.2;
-      const playerRatingWeight = 0.2;
+      const player1Team = req.query.player1Team;
+      const player1Number = req.query.player1Number;
+      const player2Team = req.query.player2Team;
+      const player2Number = req.query.player2Number;
 
-      const weights = {
-        age: playerAgeWeight,
-        height: playerHeightWeight,
-        weight: playerWeightWeight,
-        experience: playerExperienceWeight,
-        rating: playerRatingWeight,
-      };
+      const player1 = await playersAPI.getPlayerByNumber(player1Team, player1Number);
+      const player2 = await playersAPI.getPlayerByNumber(player2Team, player2Number);
+      const grade1 = await calculateAPI.calculatePlayerGrade(player1, weightSettings);
+      const grade2 = await calculateAPI.calculatePlayerGrade(player2, weightSettings);
 
-      const player1 = await playersAPI.getPlayerByNumber('MIN', 18);
-      const player2 = await playersAPI.getPlayerByNumber('PHI', 26);
-      const grade1 = await calculateAPI.calculatePlayerGrade(player1, weights);
-      const grade2 = await calculateAPI.calculatePlayerGrade(player2, weights);
+      res.send(`
+---Player Comparison---
+Player 1: ${player1.name} ${player1.team} ${player1.position} -> Grade = ${grade1}
+Player 2: ${player2.name} ${player2.team} ${player2.position} -> Grade = ${grade2}
 
-      console.log(`${player1.name}: ${grade1}`);
-      console.log(`${player2.name}: ${grade2}`);
-      res.send('done.');
+Take ${grade1 > grade2 ? player1.name : player2.name}\n`);
     } catch (e) {
         console.error('Calc Error: ', e.message);
     }

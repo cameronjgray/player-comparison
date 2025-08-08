@@ -80,9 +80,9 @@ const calcGrade = (grades, weights) => {
   return grade;
 };
 
-const calculatePlayerGrade = async (player, weights, year) => {
+const calculatePlayerGrade = async (player, weights, year = CURRENT_YEAR) => {
   const yearsToSubtract = CURRENT_YEAR - year;
-  // const teamRankings = await rankingsAPI.getRankingsForTeam(year, player.team);
+  const teamRankings = await rankingsAPI.getRankingsForTeam(year, player.team);
   const playerAgeGrade = getMetricGrade(player.age - yearsToSubtract, MAX_AGE);
   const playerHeightGrade = getMetricGrade(player.height, MAX_HEIGHT);
   const playerWeightGrade = getMetricGrade(player.weight, MAX_WEIGHT);
