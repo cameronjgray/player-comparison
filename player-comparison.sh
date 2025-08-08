@@ -16,8 +16,10 @@ if [ $# -eq 1 ]; then
       curl -X POST -i localhost:$SERVER_PORT/weight
     elif [ "$1" == "getWeights" ]; then
       curl -X GET localhost:$SERVER_PORT/weight
-    elif [ "$1" == "predict" ]; then
-      curl -X POST -i localhost:$SERVER_PORT/predict
+    elif [ "$1" == "predictPlayers" ]; then
+      curl -X POST -i localhost:$SERVER_PORT/predictPlayers
+    elif [ "$1" == "predictTeams" ]; then
+      curl -X POST -i localhost:$SERVER_PORT/predictTeams
     else
         echo "Action: $1 does not exist"
     fi

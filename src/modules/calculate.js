@@ -4,7 +4,12 @@ const { RankingType, Positions } = require('../helpers/enums');
 
 const NUMBER_OF_TEAMS = 32;
 const HIGHEST_RANKING = 99;
+const CURRENT_YEAR = 2025;
 const YEAR = 2025;
+const MAX_AGE = 41;
+const MAX_HEIGHT = 81;
+const MAX_WEIGHT = 415;
+const MAX_EXP = 20;
 
 const getRankingGrade = (rank) => 1 - (rank / NUMBER_OF_TEAMS);
 
@@ -55,36 +60,63 @@ const getTeamPositionGrade = async (team, position, year) => {
   };
 };
 
-const calculatePlayerGrade = async (player, weights, year) => {
-  const teamRankings = await rankingsAPI.getRankingsForTeam(year ?? YEAR, player.team);
-  const { rank: teamPowerRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.powerRanking);
-  const { rank: teamStrengthOfScheduleRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.strengthOfSchedule);
+const getMetricGrade = (playerVariable, maxMetric) => {
+  return playerVariable / maxMetric;
+};
 
-  const playerTeamPowerRankingGrade = getRankingGrade(teamPowerRanking);
-  const playerTeamStrengthOfScheduleGrade = getRankingGrade(teamStrengthOfScheduleRanking);
-  const oppositionPositionGrade = await getOppositionPositionGrade(player.team, player.position, year ?? YEAR);
-  const teamPositionGrade = await getTeamPositionGrade(player.team, player.position, year ?? YEAR);
-  const playerRatingGrade = getRatingGrade(player.rating);
+const calcGrade = (grades, weights) => {
+  const gradeKeys = Object.keys(grades);
 
-  const grades = [
-    playerTeamPowerRankingGrade,
-    playerTeamStrengthOfScheduleGrade,
-    teamPositionGrade,
-    oppositionPositionGrade,
-    playerRatingGrade,
-  ];
-
-  if(grades.length !== weights.length){
+  if(gradeKeys.length !== Object.keys(weights).length){
     throw new Error('grades and weights do not match');
   }
 
   let grade = 0;
 
-  for(let i = 0;i < grades.length;i++) {
-    grade += grades[i]*weights[i];
+  for(let i = 0;i < gradeKeys.length;i++) {
+    grade += grades[gradeKeys[i]]*weights[gradeKeys[i]];
   };
 
   return grade;
+};
+
+const calculatePlayerGrade = async (player, weights, year) => {
+  const yearsToSubtract = CURRENT_YEAR - year;
+  const playerAgeGrade = getMetricGrade(player.age - yearsToSubtract, MAX_AGE);
+  const playerHeightGrade = getMetricGrade(player.height, MAX_HEIGHT);
+  const playerWeightGrade = getMetricGrade(player.weight, MAX_WEIGHT);
+  const playerExperienceGrade = getMetricGrade(player.experience - yearsToSubtract, MAX_EXP);
+  const playerRatingGrade = getRatingGrade(player.rating);
+
+  const grades = {
+    // age: playerAgeGrade,
+    height: playerHeightGrade,
+    weight: playerWeightGrade,
+    experience: playerExperienceGrade,
+    rating: playerRatingGrade,
+  };
+
+  return calcGrade(grades);
+};
+
+const calculateTeamGrade = async (team, weights, year) => {
+  const teamRankings = await rankingsAPI.getRankingsForTeam(year, team);
+  const { rank: teamPowerRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.powerRanking);
+  const { rank: teamStrengthOfScheduleRanking } = teamRankings.find(ranking => ranking.rankingType === RankingType.strengthOfSchedule);
+
+  const playerTeamPowerRankingGrade = getRankingGrade(teamPowerRanking);
+  const playerTeamStrengthOfScheduleGrade = getRankingGrade(teamStrengthOfScheduleRanking);
+  const oppositionPositionGrade = await getOppositionPositionGrade(team, position, year);
+  const teamPositionGrade = await getTeamPositionGrade(team, position, year);
+
+  const grades = {
+    powerRanking: playerTeamPowerRankingGrade,
+    strengthOfSchedule: playerTeamStrengthOfScheduleGrade,
+    // teamPosition: teamPositionGrade,
+    // oppositionPosition: oppositionPositionGrade,
+  };
+
+  return calcGrade(grades);
 };
 
 module.exports = { calculatePlayerGrade };

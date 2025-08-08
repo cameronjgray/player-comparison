@@ -32,24 +32,24 @@ router.post('/sync', async (req, res) => {
 
 router.get('/calc', async (req, res) => {
     try {
-      const playerTeamPowerRankingWeight = 0.2;
-      const playerTeamStrengthOfScheduleWeight = 0.2;
-      const teamPositionGrade = 0.2;
-      const oppositionPositionWeight = 0.2;
+      const playerAgeWeight = 0.2;
+      const playerHeightWeight = 0.2;
+      const playerWeightWeight = 0.2;
+      const playerExperienceWeight = 0.2;
       const playerRatingWeight = 0.2;
 
-      const startingWeights = [
-        playerTeamPowerRankingWeight,
-        playerTeamStrengthOfScheduleWeight,
-        teamPositionGrade,
-        oppositionPositionWeight,
-        playerRatingWeight,
-      ];
+      const weights = {
+        age: playerAgeWeight,
+        height: playerHeightWeight,
+        weight: playerWeightWeight,
+        experience: playerExperienceWeight,
+        rating: playerRatingWeight,
+      };
 
       const player1 = await playersAPI.getPlayerByNumber('MIN', 18);
       const player2 = await playersAPI.getPlayerByNumber('PHI', 26);
-      const grade1 = await calculateAPI.calculatePlayerGrade(player1, startingWeights);
-      const grade2 = await calculateAPI.calculatePlayerGrade(player2, startingWeights);
+      const grade1 = await calculateAPI.calculatePlayerGrade(player1, weights);
+      const grade2 = await calculateAPI.calculatePlayerGrade(player2, weights);
 
       console.log(`${player1.name}: ${grade1}`);
       console.log(`${player2.name}: ${grade2}`);
@@ -61,7 +61,21 @@ router.get('/calc', async (req, res) => {
 
 router.post('/weight', async (req, res) => {
   try {
-    await weightsAPI.insertWeight([0,0,0,0,0], 0);
+      const playerAgeWeight = 0.2;
+      const playerHeightWeight = 0.2;
+      const playerWeightWeight = 0.2;
+      const playerExperienceWeight = 0.2;
+      const playerRatingWeight = 0.2;
+
+      const weights = {
+        age: playerAgeWeight,
+        height: playerHeightWeight,
+        weight: playerWeightWeight,
+        experience: playerExperienceWeight,
+        rating: playerRatingWeight,
+      };
+
+    await weightsAPI.insertWeight(weights, 0);
     res.send('done');
   }
   catch (e) {
@@ -79,9 +93,19 @@ router.get('/weight', async (req, res) => {
   }
 })
 
-router.post('/predict', async (req,res) => {
+router.post('/predictPlayers', async (req,res) => {
   try {
-    await predictAPI.predict();
+    await predictAPI.predictPlayers();
+    res.send('done.');
+  }
+  catch (e) {
+    console.error('predict error', e.message);
+  }
+});
+
+router.post('/predictTeams', async (req,res) => {
+  try {
+    await predictAPI.predictTeams();
     res.send('done.');
   }
   catch (e) {

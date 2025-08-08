@@ -4,7 +4,7 @@ const TABLE = 'weights';
 
 const insertWeight = async (weights, score) => {
   const result = await query(
-    `INSERT INTO ${TABLE} (weights, score) VALUES ('{${weights}}', ${score});`
+    `INSERT INTO ${TABLE} (weights, score) VALUES ('${weights}', ${score});`
   );
 
   return result?.rowCount === 1;

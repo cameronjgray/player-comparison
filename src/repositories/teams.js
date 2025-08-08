@@ -18,7 +18,7 @@ const insertTeams = async (teams) => {
 
   const mapTeamsToQuery = generateInsertQueryValues(teams);
   const teamValuesForQuery = teams.flat();
-  const queryString = `INSERT INTO ${TABLE} (name, abbreviation) VALUES ${mapTeamsToQuery};`;
+  const queryString = `INSERT INTO ${TABLE} (name, abbreviation, "position2024") VALUES ${mapTeamsToQuery};`;
 
   const result =  await query(queryString, teamValuesForQuery);
 
